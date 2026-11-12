@@ -433,7 +433,7 @@ def log_likelihood(theta, obs_wave, obs_flux, obs_flux_err, obs_limits,
         # For each upper limit, calculate the integral term
         for j in np.where(obs_limits)[0]:
             # Calculate how many sigma the model is from the limit
-            z = (flux_model.value[j] - obs_flux.value[j]) / np.abs(obs_flux_err.value[j])
+            z = (obs_flux.value[j] - flux_model.value[j]) / np.abs(obs_flux_err.value[j])
 
             # Use the complementary error function to calculate the integral term
             # of Equation 8 in https://arxiv.org/pdf/1210.0285
