@@ -15,6 +15,11 @@ except NameError:
     current_file_dir = os.getcwd()
 data_dir = os.path.join(current_file_dir, 'ref_data')
 
+OPACITY_TABLESET = {
+    'default': dict(filename_carbon='k_Carbon.dat', filename_silicate='k_Silicate.dat'),
+    'draine_pwrs10only': dict(filename_carbon='k_graphite_BruceDraine_pwrs10only', filename_silicate='k_silicate_BruceDraine_pwrs10only'),
+    'draine_81': dict(filename_carbon='k_graphite_BruceDraine_81', filename_silicate='k_silicate_BruceDraine_81')
+}
 
 def calc_distance(redshift):
     """
@@ -30,7 +35,7 @@ def calc_distance(redshift):
     distance : float
         Luminosity distance in cm
     """
-    distance = cosmo.luminosity_distance(z=redshift).to(u.cm)
+    distance = cosmo.luminosity_distance(redshift).to(u.cm)
     return distance
 
 
@@ -58,7 +63,8 @@ def import_cenwave_table(data_dir=data_dir):
 
 
 def import_coefficients(grain_size=0.1, composition='carbon', interp_grain=False,
-                        data_dir=data_dir):
+                        data_dir=data_dir, opacity_tableset=1):
+    tab = OPACITY_TABLESET[opacity_tableset]
     """
     Import the mass absorption coefficients for a given dust composition.
     The data is stored in text files with two columns: wavelength (in microns)
@@ -87,9 +93,9 @@ def import_coefficients(grain_size=0.1, composition='carbon', interp_grain=False
 
     # Import absorption coefficients file
     if composition == 'carbon':
-        file_path = os.path.join(data_dir, 'dust', 'k_Carbon.dat')
+        file_path = os.path.join(data_dir, 'dust', tab['filename_carbon'])
     elif composition == 'silicate':
-        file_path = os.path.join(data_dir, 'dust', 'k_Silicate.dat')
+        file_path = os.path.join(data_dir, 'dust', tab['filename_silicate'])
     else:
         raise ValueError(f"Invalid composition {composition}. Choose 'carbon' or 'silicate'.")
     kappa_data = table.Table.read(file_path, format='ascii')
