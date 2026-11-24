@@ -24,14 +24,14 @@ data_dir = os.path.join(current_file_dir, 'ref_data')
 
 # Define priors for the 2-component model
 ref_priors = {
-    'log_dust_mass_cold': (-6, 1),
-    'temp_cold': (20, 2000),
+    'log_dust_mass_cold': (-7, -2),
+    'temp_cold': (30, 190),
     'log_dust_mass_hot': (-8, 1),
-    'temp_hot': (20, 3000),
+    'temp_hot': (200, 1700),
     'log_dust_mass_warm': (-7, 1),
     'temp_warm': (20, 2500),
     'radius': (1e14, 1e18),
-    'sigma': (-3, 3)
+    'sigma': (0.1, 3)
 }
 
 
@@ -1215,7 +1215,7 @@ def fit_dust_model(obs_wave, obs_flux, obs_flux_err, obs_limits, redshift, objec
                    n_filter_samples=1000, plot=False, plots_model=False, plots_corner=False, plots_trace=False,
                    output_dir='.', initial_pos=None, priors=None, composition_hot=None, composition_cold=None,
                    composition_warm=None, dust_type='thin', radius=None, flat_mass_prior=True, add_sigma=True,
-                   distance=None):
+                   distance=None, opacity_tableset='default'):
     """
     Run MCMC sampler without multiprocessing.
 
@@ -1318,19 +1318,19 @@ def fit_dust_model(obs_wave, obs_flux, obs_flux_err, obs_limits, redshift, objec
 
     # Import dust data
     wave_kappa, kappa = import_coefficients(grain_size=grain_size, composition=composition,
-                                            interp_grain=False)
+                                            interp_grain=False, opacity_tableset=opacity_tableset)
 
     # For hot component
     wave_kappa_hot, kappa_hot = import_coefficients(grain_size=grain_size, composition=composition_hot,
-                                                    interp_grain=False)
+                                                    interp_grain=False, opacity_tableset=opacity_tableset)
 
     # For cold component
     wave_kappa_cold, kappa_cold = import_coefficients(grain_size=grain_size, composition=composition_cold,
-                                                      interp_grain=False)
+                                                      interp_grain=False, opacity_tableset=opacity_tableset)
 
     # For warm component
     wave_kappa_warm, kappa_warm = import_coefficients(grain_size=grain_size, composition=composition_warm,
-                                                      interp_grain=False)
+                                                      interp_grain=False, opacity_tableset=opacity_tableset)
 
     if obs_wave_filters is not None:
         # Pre-calculate interpolated opacities for the filter wavelengths
